@@ -212,7 +212,7 @@ namespace ScottPlot
         public void Style(Styles.IStyle style)
         {
             if (style is null)
-                throw new ArgumentException(nameof(style));
+                throw new ArgumentNullException(nameof(style));
 
             settings.FigureBackground.Color = style.FigureBackgroundColor;
             settings.DataBackground.Color = style.DataBackgroundColor;
@@ -228,6 +228,9 @@ namespace ScottPlot
             }
 
             XAxis2.LabelStyle(color: style.TitleFontColor, fontName: style.TitleFontName);
+
+            foreach (IStylable plottable in settings.Plottables.Where(x => x is IStylable))
+                plottable.SetStyle(style.TickMajorColor, style.TickLabelColor);
         }
 
         /// <summary>
@@ -262,6 +265,9 @@ namespace ScottPlot
             }
 
             XAxis2.Label(color: titleLabel);
+
+            foreach (IStylable plottable in settings.Plottables.Where(x => x is IStylable))
+                plottable.SetStyle(tick, axisLabel);
         }
 
         #endregion
@@ -279,6 +285,12 @@ namespace ScottPlot
 
             return settings.BenchmarkMessage.IsVisible;
         }
+
+        /// <summary>
+        /// Return an array of times for the last several renders.
+        /// The last element of the array is the most recently rendered frame time.
+        /// </summary>
+        public double[] BenchmarkTimes() => settings.BenchmarkMessage.GetRenderTimes();
 
         /// <summary>
         /// Configure legend visibility and location. 

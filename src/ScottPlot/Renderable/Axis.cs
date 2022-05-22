@@ -292,6 +292,14 @@ namespace ScottPlot.Renderable
         }
 
         /// <summary>
+        /// Control whether tick marks point outward or inward
+        /// </summary>
+        public void TickMarkDirection(bool outward)
+        {
+            AxisTicks.TicksExtendOutward = outward;
+        }
+
+        /// <summary>
         /// Set the culture to use for unit-to-string tick mark conversion
         /// </summary>
         public void SetCulture(System.Globalization.CultureInfo culture) => AxisTicks.TickCollection.Culture = culture;
@@ -379,9 +387,16 @@ namespace ScottPlot.Renderable
         /// </summary>
         public void MinorLogScale(bool enable, bool roundMajorTicks = true)
         {
-            AxisTicks.TickCollection.MinorTickDistribution = enable ? MinorTickDistribution.log : MinorTickDistribution.even;
-            if (roundMajorTicks)
+            if (enable)
+            {
+                AxisTicks.TickCollection.MinorTickDistribution = MinorTickDistribution.log;
                 AxisTicks.TickCollection.IntegerPositionsOnly = roundMajorTicks;
+            }
+            else
+            {
+                AxisTicks.TickCollection.MinorTickDistribution = MinorTickDistribution.even;
+                AxisTicks.TickCollection.IntegerPositionsOnly = false;
+            }
         }
 
         /// <summary>

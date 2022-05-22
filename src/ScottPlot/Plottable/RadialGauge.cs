@@ -22,7 +22,7 @@ namespace ScottPlot.Plottable
         public double SweepAngle;
 
         /// <summary>
-        /// Maximum size of the gauge (degrees)
+        /// Maximum angular size of the gauge (swept degrees)
         /// </summary>
         public double MaximumSizeAngle;
 
@@ -37,9 +37,9 @@ namespace ScottPlot.Plottable
         public bool Clockwise;
 
         /// <summary>
-        /// BackStartAngle plus rotation considering MaximumSizeAngle or CircularBackground
+        /// Used internally to get the angle swept by the gauge background. It's equal to 360 degrees if CircularBackground is set to true. Also, returns a positive value is the gauge is drawn clockwise and a negative one otherwise
         /// </summary>
-        public double BackEndAngle
+        internal double BackAngleSweep
         {
             get
             {
@@ -47,6 +47,7 @@ namespace ScottPlot.Plottable
                 if (!Clockwise) maxBackAngle = -maxBackAngle;
                 return maxBackAngle;
             }
+            private set { BackAngleSweep = value; } // Added for the sweepAngle check in DrawArc due to System.Drawing throwing an OutOfMemoryException.
         }
 
         /// <summary>
@@ -114,13 +115,14 @@ namespace ScottPlot.Plottable
         /// Render the gauge onto an existing Bitmap
         /// </summary>
         /// <param name="gfx">active graphics object</param>
+        /// <param name="dims">plot dimensions (used to determine pixel scaling)</param>
         /// <param name="centerPixel">pixel location on the bitmap to center the gauge on</param>
         /// <param name="radius">distance from the center (pixel units) to render the gauge</param>
-        public void Render(Graphics gfx, PointF centerPixel, float radius)
+        public void Render(Graphics gfx, PlotDimensions dims, PointF centerPixel, float radius)
         {
             RenderBackground(gfx, centerPixel, radius);
             RenderGaugeForeground(gfx, centerPixel, radius);
-            RenderGaugeLabels(gfx, centerPixel, radius);
+            RenderGaugeLabels(gfx, dims, centerPixel, radius);
         }
 
         private void RenderBackground(Graphics gfx, PointF center, float radius)
@@ -133,13 +135,17 @@ namespace ScottPlot.Plottable
             backgroundPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
             backgroundPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
 
+            // This check is specific to System.Drawing since DrawArc throws an OutOfMemoryException when the sweepAngle is very small.
+            if (Math.Abs(BackAngleSweep) <= 0.01)
+                BackAngleSweep = 0;
+
             gfx.DrawArc(backgroundPen,
                         (center.X - radius),
                         (center.Y - radius),
                         (radius * 2),
                         (radius * 2),
                         (float)BackStartAngle,
-                        (float)BackEndAngle);
+                        (float)BackAngleSweep);
         }
 
         public void RenderGaugeForeground(Graphics gfx, PointF center, float radius)
@@ -148,6 +154,10 @@ namespace ScottPlot.Plottable
             pen.Width = (float)Width;
             pen.StartCap = StartCap;
             pen.EndCap = EndCap;
+
+            // This check is specific to System.Drawing since DrawArc throws an OutOfMemoryException when the sweepAngle is very small.
+            if (Math.Abs(SweepAngle) <= 0.01)
+                SweepAngle = 0;
 
             gfx.DrawArc(
                 pen,
@@ -161,7 +171,7 @@ namespace ScottPlot.Plottable
 
         private const double DEG_PER_RAD = 180.0 / Math.PI;
 
-        private void RenderGaugeLabels(Graphics gfx, PointF center, float radius)
+        private void RenderGaugeLabels(Graphics gfx, PlotDimensions dims, PointF center, float radius)
         {
             if (!ShowLabels)
                 return;
@@ -199,7 +209,7 @@ namespace ScottPlot.Plottable
                 gfx.RotateTransform((float)rotation);
                 gfx.TranslateTransform(x, y, System.Drawing.Drawing2D.MatrixOrder.Append);
                 gfx.DrawString(Label[i].ToString(), font, brush, 0, 0, sf);
-                gfx.ResetTransform();
+                GDI.ResetTransformPreservingScale(gfx, dims);
 
                 theta -= letterRectangles[i].Width / 2 / radius * sign;
             }

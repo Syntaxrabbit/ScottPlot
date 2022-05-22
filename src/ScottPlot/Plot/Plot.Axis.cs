@@ -277,6 +277,14 @@ namespace ScottPlot
             return axis;
         }
 
+        /// <summary>
+        /// Remove the a specific axis from the plot
+        /// </summary>
+        public void RemoveAxis(Renderable.Axis axis)
+        {
+            settings.Axes.Remove(axis);
+        }
+
         #endregion
 
         #region coordinate/pixel conversions
@@ -330,6 +338,49 @@ namespace ScottPlot
         #endregion
 
         #region axis limits: get and set
+
+        /// <summary>
+        /// Return the limits of the data contained by this plot (regardless of the axis limits).
+        /// WARNING: This method iterates all data points in the plot and may be slow for large datasets.
+        /// </summary>
+        public AxisLimits GetDataLimits(int xAxisIndex = 0, int yAxisIndex = 0)
+        {
+            double xMin = double.PositiveInfinity;
+            double xMax = double.NegativeInfinity;
+            double yMin = double.PositiveInfinity;
+            double yMax = double.NegativeInfinity;
+
+            foreach (var plottable in GetPlottables())
+            {
+                if (plottable.IsVisible == false)
+                    continue;
+
+                bool xAxisMatch = plottable.XAxisIndex == xAxisIndex;
+                bool yAxisMatch = plottable.YAxisIndex == yAxisIndex;
+                if (!(xAxisMatch || yAxisMatch))
+                    continue;
+
+                AxisLimits limits = plottable.GetAxisLimits();
+
+                if (xAxisMatch)
+                {
+                    if (!double.IsNaN(limits.XMin))
+                        xMin = Math.Min(xMin, limits.XMin);
+                    if (!double.IsNaN(limits.XMax))
+                        xMax = Math.Max(xMax, limits.XMax);
+                }
+
+                if (yAxisMatch)
+                {
+                    if (!double.IsNaN(limits.YMin))
+                        yMin = Math.Min(yMin, limits.YMin);
+                    if (!double.IsNaN(limits.YMax))
+                        yMax = Math.Max(yMax, limits.YMax);
+                }
+            }
+
+            return new AxisLimits(xMin, xMax, yMin, yMax);
+        }
 
         /// <summary>
         /// Returns the current limits for a given pair of axes.
@@ -453,66 +504,63 @@ namespace ScottPlot
         /// <summary>
         /// Automatically set axis limits to fit the data.
         /// </summary>
-        /// <param name="horizontalMargin">Extra space (fraction) to add to the left and right of the limits of the data</param>
-        /// <param name="verticalMargin">Extra space (fraction) to add above and below the limits of the data</param>
+        /// <param name="horizontalMargin">Extra space (fraction) to add to the left and right of the limits of the data (typically 0.05)</param>
+        /// <param name="verticalMargin">Extra space (fraction) to add above and below the limits of the data (typically 0.1)</param>
         public void AxisAuto(double? horizontalMargin = null, double? verticalMargin = null)
         {
-            AxisAuto(horizontalMargin, verticalMargin, xAxisIndex: 0, yAxisIndex: 0);
+            settings.AxisAutoAll(horizontalMargin, verticalMargin);
         }
 
         /// <summary>
         /// Automatically set axis limits to fit the data.
         /// This overload is designed for multi-axis plots (with multiple X axes or multiple Y axes).
         /// </summary>
-        /// <param name="horizontalMargin">Extra space (fraction) to add to the left and right of the limits of the data</param>
-        /// <param name="verticalMargin">Extra space (fraction) to add above and below the limits of the data</param>
+        /// <param name="horizontalMargin">Extra space (fraction) to add to the left and right of the limits of the data (typically 0.05)</param>
+        /// <param name="verticalMargin">Extra space (fraction) to add above and below the limits of the data (typically 0.1)</param>
         /// <param name="xAxisIndex">Only adjust the specified axis (for plots with multiple X axes)</param>
         /// <param name="yAxisIndex">Only adjust the specified axis (for plots with multiple Y axes)</param>
         public void AxisAuto(double? horizontalMargin, double? verticalMargin, int xAxisIndex, int yAxisIndex)
         {
-            settings.MarginsX = horizontalMargin ?? settings.MarginsX;
-            settings.MarginsY = verticalMargin ?? settings.MarginsY;
-
-            settings.AxisAutoX(xAxisIndex, settings.MarginsX);
-            settings.AxisAutoY(yAxisIndex, settings.MarginsY);
+            settings.AxisAutoX(xAxisIndex, horizontalMargin);
+            settings.AxisAutoY(yAxisIndex, verticalMargin);
         }
 
         /// <summary>
         /// Automatically adjust axis limits to fit the data
         /// </summary>
-        /// <param name="margin">amount of space to the left and right of the data (as a fraction of its width)</param>
-        public void AxisAutoX(double margin = .05)
+        /// <param name="margin">amount of space to the left and right of the data (typically 0.05)</param>
+        /// <param name="xAxisIndex">Only adjust the specified axis (for plots with multiple X axes)</param>
+        public void AxisAutoX(double? margin = null, int xAxisIndex = 0)
         {
-            // TODO: improve support for non-primary axis indexes
-
             if (settings.Plottables.Count == 0)
             {
                 SetAxisLimits(yMin: -10, yMax: 10);
                 return;
             }
 
-            AxisLimits originalLimits = GetAxisLimits();
-            AxisAuto(horizontalMargin: margin);
-            SetAxisLimits(yMin: originalLimits.YMin, yMax: originalLimits.YMax);
+            settings.AxisAutoX(xAxisIndex, margin);
         }
 
         /// <summary>
         /// Automatically adjust axis limits to fit the data (with a little extra margin)
         /// </summary>
         /// <param name="margin">amount of space above and below the data (as a fraction of its height)</param>
-        public void AxisAutoY(double margin = .1)
+        /// <param name="yAxisIndex">Only adjust the specified axis (for plots with multiple Y axes)</param>
+        public void AxisAutoY(double? margin = null, int yAxisIndex = 0)
         {
-            // TODO: improve support for non-primary axis indexes
-
             if (settings.Plottables.Count == 0)
             {
                 SetAxisLimits(xMin: -10, xMax: 10);
                 return;
             }
 
+            /*
             AxisLimits originalLimits = GetAxisLimits();
             AxisAuto(verticalMargin: margin);
             SetAxisLimits(xMin: originalLimits.XMin, xMax: originalLimits.XMax);
+            */
+
+            settings.AxisAutoY(yAxisIndex, margin);
         }
 
         #endregion

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;net472;netcoreapp3.1;net5.0-windows</TargetFrameworks>
+    <TargetFrameworks>net461;net472;net48;netcoreapp3.1;net5.0-windows;net6.0-windows;</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AssemblyName>ScottPlot.WPF</AssemblyName>
     <OutputType>Library</OutputType>
@@ -16,9 +16,9 @@
     <PackageTags>plot graph data chart signal line bar heatmap scatter control interactive WPF</PackageTags>
     <PackageReleaseNotes>https://ScottPlot.NET/changelog</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/ScottPlot/ScottPlot</RepositoryUrl>
-    <Version>4.1.28</Version>
-    <AssemblyVersion>4.1.28.0</AssemblyVersion>
-    <FileVersion>4.1.28.0</FileVersion>
+    <Version>4.1.29</Version>
+    <AssemblyVersion>4.1.29.0</AssemblyVersion>
+    <FileVersion>4.1.29.0</FileVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>

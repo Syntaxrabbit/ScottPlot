@@ -1,11 +1,40 @@
 # ScottPlot Changelog
 
-## ScottPlot 4.1.28
+## ScottPlot 4.1.30
 _In development / not yet on NuGet_
+* Plot: Improve values returned by `GetDataLimits()` when axis lines and spans are in use (#1415, #1505, #1532) _Thanks @EFeru_
+
+## ScottPlot 4.1.29
+_Published on [NuGet](https://www.nuget.org/packages?q=scottplot) on 2022-01-02_
+* WinForms Control: Improve ClearType text rendering by no longer defaulting to a transparent control background color (#1496)
+
+## ScottPlot 4.1.28
+_Published on [NuGet](https://www.nuget.org/packages?q=scottplot) on 2022-01-01_
+* Eto Control: New ScottPlot control for the Eto GUI framework (#1425, #1438) _Thanks @rafntor_
 * Radar Plot: `OutlineWidth` now allows customization of the line around radar plots (#1426, #1277) _Thanks @Rayffer_
 * Ticks: Improved minor tick and minor grid line placement (#1420, #1421) _Thanks @bclehmann and @at2software_
 * Palette: Added Amber and Nero palettes (#1411, #1412) _Thanks @gauravagrwal_
 * Style: Hazel style (#1414) _Thanks @gauravagrwal_
+* MarkerPlot: Improved data area clipping (#1423, #1459) _Thanks @PremekTill, @lucabat, and @AndXaf_
+* MarkerPlot: Improved key in legend (#1459, #1454) _Thanks @PremekTill and @Logicman111_
+* Style: Plottables that implement `IStylable` are now styled when `Plot.Style()` is called. Styles are now improved for `ScaleBar` and `Colorbar` plot types. (#1451, #1447) _Thanks @diluculo_
+* Population plot: Population plots `DataFormat` now have a `DataFormat` member that displays individual data points on top of a bar graph representing their mean and variance (#1440) Thanks _@Syntaxrabbit_
+* SignalXY: Fixed bug affecting filled plots with zero area (#1476, #1477) _Thanks @chenxuuu_
+* Cookbook: Added example showing how to place markers colored according to a colormap displayed in a colorbar (#1461) _Thanks @obnews_
+* Ticks: Added option to invert tick mark direction (#1489, #1475) _Thanks @wangyexiang_
+* FormsPlot: Improved support for WinForms 6 (#1430, #1483) _Thanks @SuperDaveOsbourne_
+* Axes: Fixed bug where `AxisAuto()` failed to adjust all axes in multi-axis plots (#1497) _Thanks @Niravk1997_
+* Radial Gauge Plot: Fixed bug affecting rendering of extremely small gauge angles (#1492, #1474) _Thanks @arthurits_
+* Text plot and arrow plot: Now have `PixelOffsetX` and `PixelOffsetY` to facilitate small adjustments at render time (#1392)
+* Image: New `Scale` property allows customization of image size (#1406)
+* Axis: `Plot.GetDataLimits()` returns the boundaries of all data from all visible plottables regardless of the current axis limits (#1415) _Thanks @EFeru_
+* Rendering: Improved support for scaled plots when passing scale as a `Plot.Render()` argument (#1416) _Thanks @Andreas_
+* Text: Improved support for rotated text and background fills using custom alignments (#1417, #1516) _Thanks @riquich and @AndXaf_
+* Text: Added options for custom borders (#1417, #1516) _Thanks @AndXaf and @MachineFossil_
+* Plot: New `RemoveAxis()` method allows users to remove axes placed by `AddAxis()` (#1458) _Thanks @gobikulandaisamy_
+* Benchmark: `Plot.BenchmarkTimes()` now returns an array of recent frame render times (#1493, #1491) _Thanks @anose001_
+* Ticks: Disabling log-scaled minor ticks now disables tick label integer rounding (#1419) _Thanks @at2software_
+* Rendering: Improve appearance of text by defaulting to ClearType font rendering (#1496, #823) _Thanks @Elgot_
 
 ## ScottPlot 4.1.27
 _Published on [NuGet](https://www.nuget.org/packages?q=scottplot) on 2021-10-24_
