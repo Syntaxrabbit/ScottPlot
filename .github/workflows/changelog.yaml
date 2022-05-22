@@ -1,9 +1,10 @@
-name: Changelog
+name: Update Changelog Website
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+  #push:
+    #paths:
+      #- "src/ScottPlot4/changelog.md"
 
 jobs:
   changelog:

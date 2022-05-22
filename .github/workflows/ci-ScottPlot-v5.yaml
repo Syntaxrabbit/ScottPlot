@@ -1,0 +1,56 @@
+name: Test ScottPlot v5
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "dev/ScottPlot5/**"
+  pull_request:
+    paths:
+      - "dev/ScottPlot5/**"
+
+env:
+  TEST_PROJECT_FOLDER: "dev/ScottPlot5/ScottPlotTests"
+  SOLUTION_FOLDER: "dev/ScottPlot5/ScottPlotTests"
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            osName: Linux
+          - os: windows-latest
+            osName: Windows
+          - os: macos-latest
+            osName: MacOS
+    runs-on: ${{ matrix.os }}
+    name: 🧪 Test on ${{ matrix.osName }}
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v2
+      - name: ✨ Setup .NET 6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0.x"
+      - name: 🚚 Restore
+        run: dotnet restore ${{ env.TEST_PROJECT_FOLDER }}
+      - name: 🛠️ Build
+        run: dotnet build ${{ env.TEST_PROJECT_FOLDER }} --configuration Release --no-restore
+      - name: 🧪 Test
+        run: dotnet test ${{ env.TEST_PROJECT_FOLDER }} --configuration Release --no-restore --verbosity normal
+  solution:
+    runs-on: windows-latest
+    name: 🛠️ Build Solution
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v2
+      - name: ✨ Setup .NET 6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0.x"
+      - name: 🚚 Restore
+        run: dotnet restore ${{ env.SOLUTION_FOLDER }}
+      - name: 🛠️ Build
+        run: dotnet build ${{ env.SOLUTION_FOLDER }} --configuration Release --no-restore
