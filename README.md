@@ -1,5 +1,7 @@
 # ScottPlot
 
+(private fork for LRI search by Syntaxrabbit)
+
 [![Test ScottPlot v4](https://github.com/ScottPlot/ScottPlot/actions/workflows/ci-ScottPlot-v4.yaml/badge.svg)](https://github.com/ScottPlot/ScottPlot/actions/workflows/ci-ScottPlot-v4.yaml)
 [![](https://img.shields.io/nuget/dt/scottplot?color=004880&label=downloads&logo=NuGet)](https://www.nuget.org/packages/ScottPlot/)
 [![](https://img.shields.io/nuget/vpre/scottplot?color=%23004880&label=NuGet&logo=nuget)](https://www.nuget.org/packages/ScottPlot/)
